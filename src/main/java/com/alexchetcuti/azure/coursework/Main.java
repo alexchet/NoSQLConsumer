@@ -13,7 +13,7 @@ public class Main {
 		Common.createVehiclesTable();
 		System.out.println("Vehicles Table created successfully!");
 		
-		Common.receiveMessages();
+		Common.receiveSpeedCameraMessages();
 	}
 
 }

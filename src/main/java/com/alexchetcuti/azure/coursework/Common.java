@@ -6,6 +6,7 @@ import java.security.InvalidKeyException;
 import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.table.CloudTable;
 import com.microsoft.azure.storage.table.CloudTableClient;
+import com.microsoft.azure.storage.table.TableOperation;
 import com.microsoft.windowsazure.services.servicebus.*;
 import com.microsoft.windowsazure.services.servicebus.models.*;
 import com.microsoft.windowsazure.Configuration;
@@ -96,7 +97,67 @@ public class Common {
 		}
 	}
 	
-	public static void receiveMessages()
+	public static void receiveSpeedCameraMessages()
+	{
+		try
+		{
+			ServiceBusContract service = serviceConnect();
+			CloudStorageAccount storageAccount = storageConnect();
+			
+		    ReceiveMessageOptions opts = ReceiveMessageOptions.DEFAULT;
+		    opts.setReceiveMode(ReceiveMode.PEEK_LOCK);
+
+		    while(true)  {
+		        ReceiveSubscriptionMessageResult  resultSubMsg =
+		            service.receiveSubscriptionMessage("MainTopic", "SpeedCameras", opts);
+		        BrokeredMessage message = resultSubMsg.getValue();
+
+		        if (message != null && message.getMessageId() != null)
+		        {
+		            byte[] b = new byte[200];
+		            int numRead = message.getBody().read(b);
+		            while (-1 != numRead)
+		            {
+		                numRead = message.getBody().read(b);
+		            }
+
+		            CameraEntity cameraEntity = new CameraEntity(
+		            		Integer.parseInt(message.getProperty("uniqueID").toString()),
+		            		message.getProperty("streetName").toString(),
+		            		message.getProperty("town").toString(),
+		            		Integer.parseInt(message.getProperty("speedLimit").toString()),
+		            		message.getProperty("startTime").toString());
+		            
+		            System.out.println(cameraEntity.toString());
+		            // Delete message.
+		            service.deleteMessage(message);
+
+		            CloudTableClient tableClient = storageAccount.createCloudTableClient();
+		            CloudTable cloudTable = tableClient.getTableReference("SpeedCameras");
+		            TableOperation insertOperation = TableOperation.insertOrReplace(cameraEntity);
+		            cloudTable.execute(insertOperation);
+		    		
+		        }  
+		        else  
+		        {
+		            System.out.println("I'm tired, guess I'll sleep for 5 minutes!");
+		            Thread.sleep(300000);
+		        }
+		    }
+		}
+		catch (ServiceException e) {
+		    System.out.print("ServiceException encountered: ");
+		    System.out.println(e.getMessage());
+		    System.exit(-1);
+		}
+		catch (Exception e) {
+		    System.out.print("Generic exception encountered: ");
+		    System.out.println(e.getMessage());
+		    System.exit(-1);
+		}
+	}
+	
+	public static void receiveVehicleMessages()
 	{
 		try
 		{
@@ -111,34 +172,25 @@ public class Common {
 		        BrokeredMessage message = resultSubMsg.getValue();
 		        if (message != null && message.getMessageId() != null)
 		        {
-		            System.out.println("MessageID: " + message.getMessageId());
-		            // Display the topic message.
-		            System.out.print("From topic: ");
 		            byte[] b = new byte[200];
-		            String s = null;
 		            int numRead = message.getBody().read(b);
 		            while (-1 != numRead)
 		            {
-		                s = new String(b);
-		                s = s.trim();
-		                System.out.print(s);
 		                numRead = message.getBody().read(b);
 		            }
-		            System.out.println();
-		            System.out.println("Vehicle Velocity: " +
-			                message.getProperty("velocity"));
-				    System.out.println("Camera Unique ID: " +
-				    		message.getProperty("cameraUniqueID"));
+
+		    		message.getProperty("vehicleType");
+		    		message.getProperty("regPlate");
+	                message.getProperty("velocity");
+		    		message.getProperty("cameraUniqueID");
+		    		
 		            // Delete message.
-		            System.out.println("Deleting this message.");
 		            service.deleteMessage(message);
 		        }  
 		        else  
 		        {
-		            System.out.println("Finishing up - no more messages.");
-		            break;
-		            // Added to handle no more messages.
-		            // Could instead wait for more messages to be added.
+		            System.out.println("I'm tired, guess I'll sleep for 5 minutes!");
+		            Thread.sleep(300000);
 		        }
 		    }
 		}
