@@ -1,16 +1,20 @@
 package com.alexchetcuti.azure.coursework;
 
-public class Vehicle {
+import com.microsoft.azure.storage.table.TableServiceEntity;
+
+public class VehicleEntity extends TableServiceEntity {
 	
-	public Vehicle() {
+	public VehicleEntity() {
 		
 	}
 	
-	public Vehicle(VehicleType vehicleType, String regPlate, int velocity, int cameraUniqueID) {
-		this.setVehicleType(vehicleType);
-		this.setRegPlate(regPlate);
-		this.setVelocity(velocity);
-		this.setCameraUniqueID(cameraUniqueID);
+	public VehicleEntity(VehicleType vehicleType, String regPlate, int velocity, int cameraUniqueID) {
+		this.partitionKey = String.valueOf(cameraUniqueID);
+		this.rowKey = regPlate;
+		this.vehicleType = vehicleType;
+		this.regPlate = regPlate;
+		this.velocity = velocity;
+		this.cameraUniqueID = cameraUniqueID;
 	}
 	
 	public String toString()
