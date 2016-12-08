@@ -97,7 +97,49 @@ public class Common {
 		}
 	}
 	
-	public static void receiveSpeedCameraMessages()
+	public static void removeSpeedCamerasTable()
+	{
+		try
+		{
+			CloudStorageAccount storageAccount = storageConnect();
+
+		    // Create the table client.
+		    CloudTableClient tableClient = storageAccount.createCloudTableClient();
+
+		    // Delete the table and all its data if it exists.
+		    String tableName = "SpeedCameras";
+		    CloudTable cloudTable = tableClient.getTableReference(tableName);
+		    cloudTable.deleteIfExists();
+		}
+		catch (Exception e)
+		{
+		    // Output the stack trace.
+		    e.printStackTrace();
+		}
+	}
+	
+	public static void removeVehiclesTable()
+	{
+		try
+		{
+			CloudStorageAccount storageAccount = storageConnect();
+
+		    // Create the table client.
+		    CloudTableClient tableClient = storageAccount.createCloudTableClient();
+
+		    // Delete the table and all its data if it exists.
+		    String tableName = "Vehicles";
+		    CloudTable cloudTable = tableClient.getTableReference(tableName);
+		    cloudTable.deleteIfExists();
+		}
+		catch (Exception e)
+		{
+		    // Output the stack trace.
+		    e.printStackTrace();
+		}
+	}
+	
+	public static boolean receiveSpeedCameraMessages()
 	{
 		try
 		{
@@ -107,43 +149,37 @@ public class Common {
 		    ReceiveMessageOptions opts = ReceiveMessageOptions.DEFAULT;
 		    opts.setReceiveMode(ReceiveMode.PEEK_LOCK);
 
-		    while(true)  {
-		        ReceiveSubscriptionMessageResult  resultSubMsg =
-		            service.receiveSubscriptionMessage("MainTopic", "SpeedCameras", opts);
-		        BrokeredMessage message = resultSubMsg.getValue();
+	        ReceiveSubscriptionMessageResult  resultSubMsg =
+	            service.receiveSubscriptionMessage("MainTopic", "SpeedCameras", opts);
+	        BrokeredMessage message = resultSubMsg.getValue();
 
-		        if (message != null && message.getMessageId() != null)
-		        {
-		            byte[] b = new byte[200];
-		            int numRead = message.getBody().read(b);
-		            while (-1 != numRead)
-		            {
-		                numRead = message.getBody().read(b);
-		            }
+	        if (message != null && message.getMessageId() != null)
+	        {
+	            byte[] b = new byte[200];
+	            int numRead = message.getBody().read(b);
+	            while (-1 != numRead)
+	            {
+	                numRead = message.getBody().read(b);
+	            }
 
-		            CameraEntity cameraEntity = new CameraEntity(
-		            		Integer.parseInt(message.getProperty("uniqueID").toString()),
-		            		message.getProperty("streetName").toString(),
-		            		message.getProperty("town").toString(),
-		            		Integer.parseInt(message.getProperty("speedLimit").toString()),
-		            		message.getProperty("startTime").toString());
-		            
-		            System.out.println(cameraEntity.toString());
-		            // Delete message.
-		            service.deleteMessage(message);
+	            CameraEntity cameraEntity = new CameraEntity(
+	            		Integer.parseInt(message.getProperty("uniqueID").toString()),
+	            		message.getProperty("streetName").toString(),
+	            		message.getProperty("town").toString(),
+	            		Integer.parseInt(message.getProperty("speedLimit").toString()),
+	            		message.getProperty("startTime").toString());
+	            
+	            System.out.println(cameraEntity.toString());
 
-		            CloudTableClient tableClient = storageAccount.createCloudTableClient();
-		            CloudTable cloudTable = tableClient.getTableReference("SpeedCameras");
-		            TableOperation insertOperation = TableOperation.insertOrReplace(cameraEntity);
-		            cloudTable.execute(insertOperation);
-		    		
-		        }  
-		        else  
-		        {
-		            System.out.println("I'm tired, guess I'll sleep for 5 minutes!");
-		            Thread.sleep(300000);
-		        }
-		    }
+	            CloudTableClient tableClient = storageAccount.createCloudTableClient();
+	            CloudTable cloudTable = tableClient.getTableReference("SpeedCameras");
+	            TableOperation insertOperation = TableOperation.insertOrReplace(cameraEntity);
+	            cloudTable.execute(insertOperation);
+
+	            // Delete message.
+	            service.deleteMessage(message);
+	            return true;
+	        }
 		}
 		catch (ServiceException e) {
 		    System.out.print("ServiceException encountered: ");
@@ -155,44 +191,50 @@ public class Common {
 		    System.out.println(e.getMessage());
 		    System.exit(-1);
 		}
+		
+		return false;
 	}
 	
-	public static void receiveVehicleMessages()
+	public static boolean receiveVehicleMessages()
 	{
 		try
 		{
 			ServiceBusContract service = serviceConnect();
+			CloudStorageAccount storageAccount = storageConnect();
 			
 		    ReceiveMessageOptions opts = ReceiveMessageOptions.DEFAULT;
 		    opts.setReceiveMode(ReceiveMode.PEEK_LOCK);
 
-		    while(true)  {
-		        ReceiveSubscriptionMessageResult  resultSubMsg =
-		            service.receiveSubscriptionMessage("MainTopic", "Vehicles", opts);
-		        BrokeredMessage message = resultSubMsg.getValue();
-		        if (message != null && message.getMessageId() != null)
-		        {
-		            byte[] b = new byte[200];
-		            int numRead = message.getBody().read(b);
-		            while (-1 != numRead)
-		            {
-		                numRead = message.getBody().read(b);
-		            }
+	        ReceiveSubscriptionMessageResult  resultSubMsg =
+	            service.receiveSubscriptionMessage("MainTopic", "Vehicles", opts);
+	        BrokeredMessage message = resultSubMsg.getValue();
+	        if (message != null && message.getMessageId() != null)
+	        {
+	            byte[] b = new byte[200];
+	            int numRead = message.getBody().read(b);
+	            while (-1 != numRead)
+	            {
+	                numRead = message.getBody().read(b);
+	            }
 
-		    		message.getProperty("vehicleType");
-		    		message.getProperty("regPlate");
-	                message.getProperty("velocity");
-		    		message.getProperty("cameraUniqueID");
-		    		
-		            // Delete message.
-		            service.deleteMessage(message);
-		        }  
-		        else  
-		        {
-		            System.out.println("I'm tired, guess I'll sleep for 5 minutes!");
-		            Thread.sleep(300000);
-		        }
-		    }
+	            VehicleEntity vehicleEntity = new VehicleEntity(
+	            		message.getProperty("vehicleType").toString(),
+			    		message.getProperty("regPlate").toString(),
+			    		Integer.parseInt(message.getProperty("velocity").toString()),
+			    		Integer.parseInt(message.getProperty("cameraUniqueID").toString())
+	            		);
+	            
+	            System.out.println(vehicleEntity.toString());
+
+	            CloudTableClient tableClient = storageAccount.createCloudTableClient();
+	            CloudTable cloudTable = tableClient.getTableReference("Vehicles");
+	            TableOperation insertOperation = TableOperation.insertOrReplace(vehicleEntity);
+	            cloudTable.execute(insertOperation);
+	    		
+	            // Delete message.
+	            service.deleteMessage(message);
+	            return true;
+	        }
 		}
 		catch (ServiceException e) {
 		    System.out.print("ServiceException encountered: ");
@@ -204,5 +246,7 @@ public class Common {
 		    System.out.println(e.getMessage());
 		    System.exit(-1);
 		}
+		
+		return false;
 	}
 }

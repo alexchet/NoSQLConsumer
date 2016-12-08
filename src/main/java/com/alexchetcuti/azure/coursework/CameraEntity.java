@@ -10,7 +10,7 @@ public class CameraEntity extends TableServiceEntity {
 	
 	public CameraEntity(int uniqueID, String streetName, String town, int speedLimit, String startTime) {
 		this.partitionKey = String.valueOf(uniqueID);
-		this.rowKey = streetName;
+		this.rowKey = startTime;
 		this.uniqueID = uniqueID;
 		this.streetName = streetName;
 		this.town = town;

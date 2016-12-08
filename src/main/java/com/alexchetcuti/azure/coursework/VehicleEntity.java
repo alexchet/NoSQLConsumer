@@ -8,7 +8,7 @@ public class VehicleEntity extends TableServiceEntity {
 		
 	}
 	
-	public VehicleEntity(VehicleType vehicleType, String regPlate, int velocity, int cameraUniqueID) {
+	public VehicleEntity(String vehicleType, String regPlate, int velocity, int cameraUniqueID) {
 		this.partitionKey = String.valueOf(cameraUniqueID);
 		this.rowKey = regPlate;
 		this.vehicleType = vehicleType;
@@ -25,7 +25,7 @@ public class VehicleEntity extends TableServiceEntity {
 				"Camera Unique ID: " + this.getCameraUniqueID();
 	}
 	
-	private VehicleType vehicleType;
+	private String vehicleType;
 	private String regPlate;
 	private int velocity;
 	private int cameraUniqueID;
@@ -33,14 +33,14 @@ public class VehicleEntity extends TableServiceEntity {
 	/**
 	 * @return the vehicleType
 	 */
-	public VehicleType getVehicleType() {
+	public String getVehicleType() {
 		return vehicleType;
 	}
 
 	/**
 	 * @param vehicleType the vehicleType to set
 	 */
-	public void setVehicleType(VehicleType vehicleType) {
+	public void setVehicleType(String vehicleType) {
 		this.vehicleType = vehicleType;
 	}
 
