@@ -1,12 +1,16 @@
 package com.alexchetcuti.azure.coursework;
 
-public class Camera {
+import com.microsoft.azure.storage.table.TableServiceEntity;
 
-	public Camera() {
+public class CameraEntity extends TableServiceEntity {
+
+	public CameraEntity() {
 		
 	}
 	
-	public Camera(int uniqueID, String streetName, String town, int speedLimit, String startTime) {
+	public CameraEntity(int uniqueID, String streetName, String town, int speedLimit, String startTime) {
+		this.partitionKey = String.valueOf(uniqueID);
+		this.rowKey = streetName;
 		this.uniqueID = uniqueID;
 		this.streetName = streetName;
 		this.town = town;

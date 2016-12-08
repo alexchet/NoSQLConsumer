@@ -12,6 +12,8 @@ public class Main {
 		System.out.println("Smart Cameras Table created successfully!");
 		Common.createVehiclesTable();
 		System.out.println("Vehicles Table created successfully!");
+		
+		Common.receiveMessages();
 	}
 
 }
