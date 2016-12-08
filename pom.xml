@@ -19,5 +19,25 @@
   		<artifactId>azure-management-storage</artifactId>
   		<version>0.8.0</version>
   	</dependency>
+  	<dependency>
+  		<groupId>com.microsoft.azure</groupId>
+  		<artifactId>azure-servicebus</artifactId>
+  		<version>0.9.7</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.microsoft.azure</groupId>
+  		<artifactId>azure-core</artifactId>
+  		<version>0.9.7</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.microsoft.azure</groupId>
+  		<artifactId>azure</artifactId>
+  		<version>1.0.0-beta3</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.microsoft.windowsazure</groupId>
+  		<artifactId>microsoft-azure-api-servicebus</artifactId>
+  		<version>0.5.0</version>
+  	</dependency>
   </dependencies>
 </project>
