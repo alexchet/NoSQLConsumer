@@ -107,7 +107,7 @@ public class Common {
 
 		    while(true)  {
 		        ReceiveSubscriptionMessageResult  resultSubMsg =
-		            service.receiveSubscriptionMessage("Vehicles", "AllVehicles", opts);
+		            service.receiveSubscriptionMessage("MainTopic", "Vehicles", opts);
 		        BrokeredMessage message = resultSubMsg.getValue();
 		        if (message != null && message.getMessageId() != null)
 		        {
