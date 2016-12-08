@@ -125,8 +125,10 @@ public class Common {
 		                numRead = message.getBody().read(b);
 		            }
 		            System.out.println();
-		            System.out.println("Custom Property: " +
-		                message.getProperty("MessageNumber"));
+		            System.out.println("Vehicle Velocity: " +
+			                message.getProperty("velocity"));
+				    System.out.println("Camera Unique ID: " +
+				    		message.getProperty("cameraUniqueID"));
 		            // Delete message.
 		            System.out.println("Deleting this message.");
 		            service.deleteMessage(message);
