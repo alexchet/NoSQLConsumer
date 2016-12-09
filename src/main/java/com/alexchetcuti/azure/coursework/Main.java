@@ -12,7 +12,6 @@ public class Main {
 		Common.createVehiclesTable();
 		System.out.println("Vehicles Table created successfully!");
 
-
 		boolean contSpeedCameraRead = true;
 		boolean contVehiclesRead = true;
 	    while(true)  {
@@ -21,6 +20,8 @@ public class Main {
 	    	if (!contSpeedCameraRead && !contVehiclesRead)
 	        {
 	            System.out.println("I'm tired, guess I'll sleep for 30 seconds!");
+	    		contSpeedCameraRead = true;
+	    		contVehiclesRead = true;
 	            try {
 					Thread.sleep(30000);
 				} catch (InterruptedException e) {
