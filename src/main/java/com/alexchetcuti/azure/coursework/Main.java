@@ -6,7 +6,7 @@ public class Main {
 		// TODO Auto-generated constructor stub
 	}
 
-	public static void main(String[] args) {		
+	public static void main(String[] args) {
 		Common.createSmartCamerasTable();
 		System.out.println("Smart Cameras Table created successfully!");
 		Common.createVehiclesTable();
