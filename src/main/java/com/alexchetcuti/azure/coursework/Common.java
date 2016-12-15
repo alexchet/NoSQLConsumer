@@ -178,6 +178,7 @@ public class Common {
 
 	            // Delete message.
 	            service.deleteMessage(message);
+
 	            return true;
 	        }
 		}
@@ -233,6 +234,7 @@ public class Common {
 	    		
 	            // Delete message.
 	            service.deleteMessage(message);
+
 	            return true;
 	        }
 		}
